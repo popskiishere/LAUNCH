@@ -78,14 +78,18 @@ export async function GET(req: Request) {
     const limit = parseInt(searchParams.get('limit') || '10')
 
     // Build where clause
-    const where = status ? { status: status.toUpperCase() } : {}
+    const where = status ? { 
+      status: status.toUpperCase()
+    } : {}
 
     // Get total count for pagination
-    const total = await prisma.contact.count({ where })
+    const total = await prisma.contact.count({ 
+      where: where as { status?: 'NEW' | 'IN_PROGRESS' | 'RESPONDED' | 'CLOSED' }
+    })
 
     // Get contacts with pagination
     const contacts = await prisma.contact.findMany({
-      where,
+      where: where as { status?: 'NEW' | 'IN_PROGRESS' | 'RESPONDED' | 'CLOSED' },
       orderBy: {
         createdAt: 'desc'
       },
